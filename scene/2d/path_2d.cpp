@@ -122,10 +122,11 @@ void PathFollow2D::_update_transform() {
 
 	}else if(radius_status){
 
-		Vector2 n = (c->interpolate_baked(o,cubic)-pos).normalized();
+		Vector2 n =(c->interpolate_baked(o+1,cubic)-pos).normalized();
 		Vector2 t = -n.tangent();
-		pos.x+=h_offset;
-		pos.y+=(v_offset+(t.x*radius));
+		pos.x+= h_offset+(t.x*radius);
+		pos.y+= v_offset+(t.y*radius);
+
     } else {
 
 		pos.x+=h_offset;
