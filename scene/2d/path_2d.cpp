@@ -120,7 +120,13 @@ void PathFollow2D::_update_transform() {
 
 		set_rot(t.atan2());
 
-	} else {
+	}else if(radius_status){
+
+		Vector2 n = (c->interpolate_baked(o,cubic)-pos).normalized();
+		Vector2 t = -n.tangent();
+		pos.x+=h_offset;
+		pos.y+=(v_offset+(t.x*radius));
+    } else {
 
 		pos.x+=h_offset;
 		pos.y+=v_offset;
@@ -185,6 +191,10 @@ bool PathFollow2D::_set(const StringName& p_name, const Variant& p_value) {
 		set_loop(p_value);
 	} else if (String(p_name)=="lookahead") {
 		set_lookahead(p_value);
+	} else if (String(p_name)=="radius_status") {
+		set_radius_status(p_value);
+	} else if (String(p_name)=="radius") {
+		set_radius(p_value);
 	} else
 		return false;
 
@@ -209,6 +219,10 @@ bool PathFollow2D::_get(const StringName& p_name,Variant &r_ret) const{
 		r_ret=loop;
 	} else if (String(p_name)=="lookahead") {
 		r_ret=lookahead;
+	} else if (String(p_name)=="radius_status") {
+		r_ret=radius_status;
+	} else if (String(p_name)=="radius") {
+		r_ret=radius;
 	} else
 		return false;
 
@@ -228,6 +242,8 @@ void PathFollow2D::_get_property_list( List<PropertyInfo> *p_list) const{
 	p_list->push_back( PropertyInfo( Variant::BOOL, "cubic_interp"));
 	p_list->push_back( PropertyInfo( Variant::BOOL, "loop"));
 	p_list->push_back( PropertyInfo( Variant::REAL, "lookahead",PROPERTY_HINT_RANGE,"0.001,1024.0,0.001"));
+    p_list->push_back( PropertyInfo( Variant::BOOL, "radius_status"));
+    p_list->push_back( PropertyInfo( Variant::REAL, "radius"));
 }
 
 
@@ -255,6 +271,8 @@ void PathFollow2D::_bind_methods() {
 	ObjectTypeDB::bind_method(_MD("has_loop"),&PathFollow2D::has_loop);
 
 
+	ObjectTypeDB::bind_method(_MD("set_radius_status","enable"),&PathFollow2D::set_radius_status);
+	ObjectTypeDB::bind_method(_MD("set_radius","radius"),&PathFollow2D::set_radius);
 }
 
 void PathFollow2D::set_offset(float p_offset) {
@@ -347,6 +365,19 @@ bool PathFollow2D::has_loop() const{
 }
 
 
+void PathFollow2D::set_radius_status(bool p_enable) {
+
+	radius_status=p_enable;
+}
+
+void PathFollow2D::set_radius(float p_radius) {
+
+	radius=p_radius;
+	if (path)
+		_update_transform();
+
+}
+
 PathFollow2D::PathFollow2D() {
 
 	offset=0;
@@ -357,4 +388,6 @@ PathFollow2D::PathFollow2D() {
 	cubic=true;
 	loop=true;
 	lookahead=4;
+    radius_status=false;
+    radius=0;
 }

@@ -72,6 +72,8 @@ private:
 	bool loop;
 	bool rotate;
 
+    bool radius_status;
+    real_t radius;
 	void _update_transform();
 
 
@@ -109,6 +111,8 @@ public:
 	void set_cubic_interpolation(bool p_enable);
 	bool get_cubic_interpolation() const;
 
+    void set_radius_status(bool p_enable);
+    void set_radius(float p_radius);
 	PathFollow2D();
 };
 
